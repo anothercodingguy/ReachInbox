@@ -184,6 +184,32 @@ npm run dev
 # App running at http://localhost:3000
 ```
 
+## ☁️ Deployment on Render
+
+This project includes a `render.yaml` Blueprint for easy deployment.
+
+1. **Push to GitHub**: Ensure the code is in a GitHub repository.
+2. **Create Web Service**: Go to Render.com and create a new Blueprint.
+3. **Connect Repository**: Select your repository.
+4. **Deploy**: Render will automatically create the database, Redis, API, Worker, and Frontend services.
+
+### Post-Deployment Configuration
+
+After deployment, update these environment variables in the Render Dashboard:
+
+**Frontend Service:**
+- `GOOGLE_CLIENT_ID`: Your Google OAuth Client ID
+- `GOOGLE_CLIENT_SECRET`: Your Google OAuth Client Secret
+- `NEXTAUTH_URL`: Your Render frontend URL (e.g., `https://reachinbox-frontend.onrender.com`)
+- `NEXT_PUBLIC_API_URL`: Your Render backend URL (e.g., `https://reachinbox-api.onrender.com`)
+
+**Backend Service:**
+- `FRONTEND_URL`: Your Render frontend URL
+
+**Google Cloud Console:**
+- Add your Render frontend callback URL to authorized redirect URIs:
+  `https://your-frontend-url.onrender.com/api/auth/callback/google`
+
 ## 🔧 Configuration
 
 ### Environment Variables
