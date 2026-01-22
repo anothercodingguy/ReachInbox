@@ -23,10 +23,7 @@ services:
           type: redis
           property: connectionString
       - key: FRONTEND_URL
-        fromService:
-          name: reachinbox-frontend
-          type: web
-          property: url
+        sync: false  # Set manually after deployment
       - key: BACKEND_PORT
         value: 10000
       - key: WORKER_CONCURRENCY
@@ -76,15 +73,14 @@ services:
         value: production
       - key: NEXTAUTH_SECRET
         generateValue: true
+      - key: NEXTAUTH_URL
+        sync: false  # Set to your frontend URL after deployment
       - key: GOOGLE_CLIENT_ID
         sync: false  # Set manually in Render dashboard
       - key: GOOGLE_CLIENT_SECRET
         sync: false  # Set manually in Render dashboard
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          name: reachinbox-api
-          type: web
-          property: url
+        sync: false  # Set to your backend URL after deployment
 
   # Redis
   - type: redis
