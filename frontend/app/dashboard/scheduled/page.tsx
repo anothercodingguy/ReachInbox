@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
-import { getEmails, cancelEmail, Email } from "@/lib/api";
+import { getEmails, cancelEmail, Email } from "../../../lib/api";
 import Link from "next/link";
 
 export default function ScheduledPage() {
@@ -110,8 +110,8 @@ function EmailCard({
             <div className="flex items-start gap-4">
                 <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isUpcoming
-                            ? "bg-yellow-100 text-yellow-600"
-                            : "bg-blue-100 text-blue-600"
+                        ? "bg-yellow-100 text-yellow-600"
+                        : "bg-blue-100 text-blue-600"
                         }`}
                 >
                     <svg

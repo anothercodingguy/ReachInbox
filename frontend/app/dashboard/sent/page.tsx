@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { getEmails, Email } from "@/lib/api";
+import { getEmails, Email } from "../../../lib/api";
 import Link from "next/link";
 
 export default function SentPage() {

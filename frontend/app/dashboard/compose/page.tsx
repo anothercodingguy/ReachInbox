@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Papa from "papaparse";
-import { scheduleEmails, CreateEmailData } from "@/lib/api";
+import { scheduleEmails, CreateEmailData } from "../../../lib/api";
 
 export default function ComposePage() {
     const { data: session } = useSession();
@@ -125,8 +125,8 @@ export default function ComposePage() {
                         setCsvPreview([]);
                     }}
                     className={`px-4 py-2 rounded-lg font-medium transition-all ${mode === "single"
-                            ? "bg-primary-500 text-white"
-                            : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                        ? "bg-primary-500 text-white"
+                        : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                         }`}
                 >
                     Single Email
@@ -134,8 +134,8 @@ export default function ComposePage() {
                 <button
                     onClick={() => setMode("csv")}
                     className={`px-4 py-2 rounded-lg font-medium transition-all ${mode === "csv"
-                            ? "bg-primary-500 text-white"
-                            : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                        ? "bg-primary-500 text-white"
+                        : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                         }`}
                 >
                     CSV Upload

@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { getEmailStats } from "@/lib/api";
+import { getEmailStats } from "../../lib/api";
 
 export default function DashboardPage() {
     const { data: session } = useSession();
