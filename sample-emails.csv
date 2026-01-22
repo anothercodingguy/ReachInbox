@@ -1,0 +1,6 @@
+toEmail,subject,body,scheduledAt
+john@example.com,Welcome to ReachInbox!,"<h1>Hello John!</h1><p>Thank you for signing up. We're excited to have you on board.</p>",2024-01-20T10:00:00Z
+jane@example.com,Your Weekly Newsletter,"<h1>Weekly Update</h1><p>Here's what's new this week...</p><ul><li>Feature 1</li><li>Feature 2</li></ul>",2024-01-20T10:05:00Z
+bob@example.com,Special Offer Just for You,"<h1>Exclusive Deal!</h1><p>Get 50% off on your next purchase. Use code: SAVE50</p>",2024-01-20T10:10:00Z
+alice@example.com,Reminder: Upcoming Webinar,"<h1>Don't Miss Out!</h1><p>Our webinar starts tomorrow at 2 PM EST.</p><p><a href='#'>Join Here</a></p>",2024-01-20T10:15:00Z
+charlie@example.com,Your Account Summary,"<h1>Monthly Summary</h1><p>Here's your account activity for the past month.</p><table><tr><td>Emails Sent</td><td>150</td></tr></table>",2024-01-20T10:20:00Z
