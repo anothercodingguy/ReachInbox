@@ -9,31 +9,15 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
-                primary: {
-                    50: '#f0f9ff',
-                    100: '#e0f2fe',
-                    200: '#bae6fd',
-                    300: '#7dd3fc',
-                    400: '#38bdf8',
-                    500: '#0ea5e9',
-                    600: '#0284c7',
-                    700: '#0369a1',
-                    800: '#075985',
-                    900: '#0c4a6e',
-                    950: '#082f49',
-                },
+                background: '#0B0B0C', // Near-black
+                card: '#141416', // Slightly lighter dark
+                border: 'rgba(255,255,255,0.06)',
+                primary: '#FFFFFF',
+                secondary: '#A1A1AA',
+                muted: '#71717A',
                 accent: {
-                    50: '#fdf4ff',
-                    100: '#fae8ff',
-                    200: '#f5d0fe',
-                    300: '#f0abfc',
-                    400: '#e879f9',
-                    500: '#d946ef',
-                    600: '#c026d3',
-                    700: '#a21caf',
-                    800: '#86198f',
-                    900: '#701a75',
-                    950: '#4a044e',
+                    DEFAULT: '#6366F1', // Indigo
+                    hover: '#4F46E5',
                 },
             },
             animation: {
