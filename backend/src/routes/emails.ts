@@ -2,8 +2,13 @@ import { Router, Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { z } from 'zod';
 import prisma from '../lib/prisma.js';
-import { scheduleEmailJob, cancelEmailJob, getJobStatus } from '../lib/queue.js';
+import { emailQueue, scheduleEmailJob, cancelEmailJob, getJobStatus } from '../lib/queue.js';
 import { EmailStatus, Prisma } from '@prisma/client';
+import { createRateLimiter } from '../lib/rateLimiter.js';
+import Redis from 'ioredis';
+
+const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+const rateLimiter = createRateLimiter(redis);
 
 const router = Router();
 
@@ -177,6 +182,32 @@ router.get(
             failed,
             cancelled,
             total: scheduled + processing + sent + failed + cancelled,
+        });
+    })
+);
+
+/**
+ * GET /api/emails/limits - Get rate limit status
+ */
+router.get(
+    '/limits',
+    asyncHandler(async (req: Request, res: Response) => {
+        const userId = req.headers['x-user-id'] as string;
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized - User ID required' });
+            return;
+        }
+
+        const count = await rateLimiter.getCurrentCount(`user:${userId}`);
+        const limit = parseInt(process.env.RATE_LIMIT_PER_HOUR || '100', 10);
+
+        res.json({
+            scope: 'user',
+            key: userId,
+            limit,
+            used: count,
+            remaining: Math.max(0, limit - count),
+            window: '1h'
         });
     })
 );
