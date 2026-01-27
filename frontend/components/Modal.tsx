@@ -27,18 +27,20 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
-            <div className="w-full max-w-md bg-background border border-border rounded-lg shadow-2xl p-6 relative animate-fade-in">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-lg font-semibold text-primary">{title}</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+            <div className="w-full max-w-lg bg-[#141416] border border-white/10 rounded-xl shadow-2xl relative animate-slide-up overflow-hidden">
+                <div className="flex justify-between items-center p-6 border-b border-white/5">
+                    <h2 className="text-lg font-medium text-white">{title}</h2>
                     <button
                         onClick={onClose}
-                        className="text-muted hover:text-primary transition-colors"
+                        className="text-zinc-500 hover:text-white transition-colors p-1 rounded-md hover:bg-white/5"
                     >
-                        ✕
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                     </button>
                 </div>
-                <div>{children}</div>
+                <div className="p-6">{children}</div>
             </div>
         </div>
     );

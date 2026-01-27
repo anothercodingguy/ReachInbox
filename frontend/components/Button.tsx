@@ -1,7 +1,7 @@
 import React from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: "primary" | "secondary";
+    variant?: "primary" | "secondary" | "danger";
     children: React.ReactNode;
 }
 
@@ -11,18 +11,16 @@ export const Button: React.FC<ButtonProps> = ({
     className = "",
     ...props
 }) => {
-    const baseStyles = "px-4 py-2 rounded-md transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed";
+    const baseStyles = "px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-accent/50";
 
-    // Primary: solid accent color
-    const primaryStyles = "bg-accent hover:bg-accent-hover text-white border border-transparent";
-
-    // Secondary: transparent with subtle border
-    const secondaryStyles = "bg-transparent border border-border text-secondary hover:text-primary hover:bg-card";
-
-    const variantStyles = variant === "primary" ? primaryStyles : secondaryStyles;
+    const variants = {
+        primary: "bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm border border-transparent",
+        secondary: "bg-transparent border border-white/10 text-zinc-300 hover:text-white hover:bg-white/5",
+        danger: "bg-transparent border border-red-900/30 text-red-500 hover:bg-red-950/30 hover:text-red-400"
+    };
 
     return (
-        <button className={`${baseStyles} ${variantStyles} ${className}`} {...props}>
+        <button className={`${baseStyles} ${variants[variant]} ${className}`} {...props}>
             {children}
         </button>
     );

@@ -21,16 +21,7 @@ export const ComposeModal: React.FC<ComposeModalProps> = ({ isOpen, onClose }) =
     const [recipientCount, setRecipientCount] = useState(0);
     const [parsedEmails, setParsedEmails] = useState<string[]>([]);
     const [subject, setSubject] = useState("");
-    const [body, setBody] = useState(""); // Added body field (even if simple) or use default? 
-    // The previous mock didn't have a body input, but the API expects `body`. 
-    // I'll add a simple textarea or just an input for now, or infer it.
-    // The user requirement said: "Compose Email ... Form submit".
-    // I will add a Body input. 
-
-    // Actually, looking at the previous file, it had Subject, Date, Time. 
-    // The API `CreateEmailData` needs: toEmail, subject, body, scheduledAt.
-    // So I need to collect Body, Date, Time.
-
+    const [body, setBody] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
     const [isDragging, setIsDragging] = useState(false);
@@ -46,8 +37,6 @@ export const ComposeModal: React.FC<ComposeModalProps> = ({ isOpen, onClose }) =
             if (!date || !time) throw new Error("Date and time are required");
 
             const scheduledAt = new Date(`${date}T${time}`).toISOString();
-            // Simple basic body for now since there's no rich editor requested yet, 
-            // but I should add a field for it.
             const emailBody = body || "Default body content";
 
             const emailData: CreateEmailData[] = parsedEmails.map(email => ({
@@ -100,21 +89,11 @@ export const ComposeModal: React.FC<ComposeModalProps> = ({ isOpen, onClose }) =
 
         Papa.parse(file, {
             complete: (results) => {
-                // Assume first column is email, or header "email" exists
-                // For simplicity, let's flatten and find emails
                 const data = results.data as any[];
                 const emails: string[] = [];
-
-                // transform data to find emails. 
-                // If header row exists, look for 'email' column.
-                // Else grab first column.
-                // Let's iterate all cells and regex match email? potentially slow but robust for "random csv"
-                // Or just assume column 0.
-
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
                 data.forEach(row => {
-                    // row is array or object depending on header option. Default is array.
                     if (Array.isArray(row)) {
                         row.forEach(cell => {
                             if (typeof cell === 'string' && emailRegex.test(cell.trim())) {
@@ -145,30 +124,32 @@ export const ComposeModal: React.FC<ComposeModalProps> = ({ isOpen, onClose }) =
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="New Email Schedule">
+        <Modal isOpen={isOpen} onClose={onClose} title="New Campaign">
             <div className="space-y-6">
-                <Input
-                    label="Subject"
-                    placeholder="Enter email subject"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                />
+                <div className="space-y-4">
+                    <Input
+                        label="Subject"
+                        placeholder="e.g. Q4 Update"
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                    />
 
-                <div>
-                    <label className="block text-sm font-medium text-secondary mb-1">Body</label>
-                    <textarea
-                        className="w-full bg-card border border-border rounded-lg px-4 py-2 text-white placeholder-muted focus:outline-none focus:ring-2 focus:ring-primary h-24 resize-none"
-                        placeholder="Enter email content..."
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                    ></textarea>
+                    <div className="space-y-1.5">
+                        <label className="block text-sm font-medium text-zinc-400">Content</label>
+                        <textarea
+                            className="w-full bg-[#141416] border border-white/10 rounded-md px-3 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 h-24 resize-none transition-all"
+                            placeholder="Write your email content here..."
+                            value={body}
+                            onChange={(e) => setBody(e.target.value)}
+                        ></textarea>
+                    </div>
                 </div>
 
-                <div className="space-y-1">
-                    <label className="text-sm font-medium text-secondary">Recipients (CSV)</label>
+                <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-zinc-400">Recipients</label>
                     <div
-                        className={`border border-dashed rounded-lg p-8 flex flex-col items-center justify-center text-center transition-colors cursor-pointer group ${isDragging ? "border-primary bg-primary/10" : "border-border hover:bg-card/50"
-                            }`}
+                        className={`border border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center transition-all cursor-pointer group ${isDragging ? "border-indigo-500 bg-indigo-500/5" : "border-white/10 hover:border-white/20 hover:bg-white/5"
+                            } ${recipientCount > 0 ? "bg-indigo-500/5 border-indigo-500/30" : ""}`}
                         onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                         onDragLeave={() => setIsDragging(false)}
                         onDrop={handleFileUpload}
@@ -181,12 +162,23 @@ export const ComposeModal: React.FC<ComposeModalProps> = ({ isOpen, onClose }) =
                             accept=".csv"
                             onChange={handleFileUpload}
                         />
-                        <div className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                            <span className="text-muted group-hover:text-primary">↓</span>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 transition-transform group-hover:scale-110 ${recipientCount > 0 ? "bg-indigo-500/20 text-indigo-400" : "bg-white/5 text-zinc-400"
+                            }`}>
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
                         </div>
-                        <p className="text-sm text-secondary">
-                            {recipientCount > 0 ? `${recipientCount} recipients loaded` : "Drag & drop CSV or click to browse"}
-                        </p>
+                        {recipientCount > 0 ? (
+                            <div className="text-center">
+                                <p className="text-sm font-medium text-indigo-400">{recipientCount} recipients ready</p>
+                                <p className="text-xs text-zinc-500 mt-1">Click to replace CSV</p>
+                            </div>
+                        ) : (
+                            <div className="text-center">
+                                <p className="text-sm text-zinc-300">Upload CSV file</p>
+                                <p className="text-xs text-zinc-500 mt-1">Drag and drop or click to browse</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -194,20 +186,20 @@ export const ComposeModal: React.FC<ComposeModalProps> = ({ isOpen, onClose }) =
                     <Input
                         label="Date"
                         type="date"
-                        className="w-full"
                         value={date}
+                        className="calendar-dark"
                         onChange={(e) => setDate(e.target.value)}
                     />
                     <Input
                         label="Time"
                         type="time"
-                        className="w-full"
                         value={time}
+                        className="calendar-dark"
                         onChange={(e) => setTime(e.target.value)}
                     />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4">
+                <div className="flex justify-end gap-3 pt-2 border-t border-white/5 mt-6">
                     <Button variant="secondary" onClick={onClose} disabled={scheduleMutation.isPending}>
                         Cancel
                     </Button>
@@ -215,7 +207,7 @@ export const ComposeModal: React.FC<ComposeModalProps> = ({ isOpen, onClose }) =
                         onClick={() => scheduleMutation.mutate()}
                         disabled={scheduleMutation.isPending || recipientCount === 0 || !subject || !date || !time}
                     >
-                        {scheduleMutation.isPending ? "Scheduling..." : "Schedule Emails"}
+                        {scheduleMutation.isPending ? "Scheduling..." : "Schedule Campaign"}
                     </Button>
                 </div>
             </div>
