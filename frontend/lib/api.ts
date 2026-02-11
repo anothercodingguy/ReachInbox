@@ -1,118 +1,44 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
-interface FetchOptions extends RequestInit {
-    userId?: string;
+export interface Email {
+    id: string;
+    recipient: string;
+    subject: string;
+    body: string;
+    status: "SCHEDULED" | "SENT" | "FAILED";
+    scheduledAt: string;
+    sentAt?: string;
+    error?: string;
+    createdAt: string;
 }
 
-async function fetchAPI<T>(
-    endpoint: string,
-    options: FetchOptions = {}
-): Promise<T> {
-    const { userId, ...fetchOptions } = options;
+export interface CreateEmailData {
+    recipient: string;
+    subject: string;
+    body: string;
+    scheduledAt: string;
+}
 
-    const headers: HeadersInit = {
-        "Content-Type": "application/json",
-        ...(userId && { "x-user-id": userId }),
-        ...options.headers,
-    };
-
-    const url = `${API_URL}${endpoint}`;
-
-    const response = await fetch(url, {
-        ...fetchOptions,
-        headers,
+async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+        headers: { "Content-Type": "application/json", ...options.headers },
+        ...options,
     });
 
     if (!response.ok) {
         const error = await response.json().catch(() => ({ error: "Unknown error" }));
-        throw new Error(error.error || error.message || "API request failed");
+        throw new Error(error.error || "Request failed");
     }
-
     return response.json();
 }
 
-// Types
-export interface Email {
-    id: string;
-    userId: string;
-    fromEmail: string;
-    toEmail: string;
-    subject: string;
-    body: string;
-    status: "SCHEDULED" | "PROCESSING" | "SENT" | "FAILED" | "CANCELLED";
-    scheduledAt: string;
-    sentAt: string | null;
-    etherealUrl: string | null;
-    errorMessage: string | null;
-    createdAt: string;
-    updatedAt: string;
+export async function getEmails(): Promise<Email[]> {
+    return fetchAPI<Email[]>("/api/emails");
 }
 
-export interface EmailStats {
-    scheduled: number;
-    processing: number;
-    sent: number;
-    failed: number;
-    cancelled: number;
-    total: number;
-}
-
-export interface PaginatedEmails {
-    emails: Email[];
-    pagination: {
-        page: number;
-        limit: number;
-        total: number;
-        totalPages: number;
-    };
-}
-
-export interface CreateEmailData {
-    toEmail: string;
-    subject: string;
-    body: string;
-    scheduledAt: string;
-}
-
-// API Functions
-export async function getEmails(
-    userId: string,
-    status?: string,
-    page = 1,
-    limit = 20
-): Promise<PaginatedEmails> {
-    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-    if (status) params.set("status", status);
-
-    return fetchAPI(`/api/emails?${params}`, { userId });
-}
-
-export async function getEmailStats(userId: string): Promise<EmailStats> {
-    return fetchAPI("/api/emails/stats", { userId });
-}
-
-export async function getEmail(userId: string, emailId: string): Promise<Email> {
-    return fetchAPI(`/api/emails/${emailId}`, { userId });
-}
-
-export async function scheduleEmails(
-    userId: string,
-    fromEmail: string,
-    emails: CreateEmailData[]
-): Promise<{ message: string; emails: Email[] }> {
-    return fetchAPI("/api/emails", {
+export async function scheduleEmail(data: CreateEmailData): Promise<Email> {
+    return fetchAPI<Email>("/api/emails", {
         method: "POST",
-        userId,
-        body: JSON.stringify({ fromEmail, emails }),
-    });
-}
-
-export async function cancelEmail(
-    userId: string,
-    emailId: string
-): Promise<{ message: string }> {
-    return fetchAPI(`/api/emails/${emailId}`, {
-        method: "DELETE",
-        userId,
+        body: JSON.stringify(data),
     });
 }

@@ -5,8 +5,6 @@ import { Button } from "@/components/Button";
 import { ComposeModal } from "@/components/ComposeModal";
 import { ScheduledEmailsTable } from "@/components/ScheduledEmailsTable";
 import { SentEmailsTable } from "@/components/SentEmailsTable";
-import { useQuery } from "@tanstack/react-query";
-import { getEmailStats } from "@/lib/api";
 import { useSession } from "next-auth/react";
 
 export default function DashboardPage() {
@@ -14,38 +12,17 @@ export default function DashboardPage() {
     const [activeTab, setActiveTab] = useState<"scheduled" | "sent">("scheduled");
     const [isComposeOpen, setIsComposeOpen] = useState(false);
 
-    const userId = (session?.user as any)?.id;
-
-    const { data: stats } = useQuery({
-        queryKey: ["email-stats", userId],
-        queryFn: () => getEmailStats(userId),
-        enabled: !!userId,
-        refetchInterval: 10000,
-    });
-
     return (
-        <div className="space-y-12 animate-fade-in pb-20 max-w-5xl mx-auto">
-            {/* Overview Section */}
-            <div className="grid grid-cols-3 gap-4">
-                <div className="p-6 rounded-xl bg-[#141416] border border-white/5 flex flex-col gap-1">
-                    <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Scheduled</span>
-                    <span className="text-3xl font-medium text-white">{stats?.scheduled || 0}</span>
+        <div className="space-y-12 animate-fade-in pb-20 max-w-5xl mx-auto pt-10">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
+                    <p className="text-zinc-500">Welcome back, {session?.user?.name || "User"}</p>
                 </div>
-                <div className="p-6 rounded-xl bg-[#141416] border border-white/5 flex flex-col gap-1">
-                    <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Sent</span>
-                    <span className="text-3xl font-medium text-white">{stats?.sent || 0}</span>
-                </div>
-                <div className="p-6 rounded-xl bg-[#141416] border border-white/5 flex flex-col gap-1">
-                    <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Failed</span>
-                    <span className="text-3xl font-medium text-white">{stats?.failed || 0}</span>
-                </div>
-            </div>
-
-            {/* Primary Action */}
-            <div>
                 <Button
                     onClick={() => setIsComposeOpen(true)}
-                    className="h-12 px-8 text-base bg-white text-black hover:bg-zinc-200 border-none shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                    className="h-10 px-6 bg-white text-black hover:bg-zinc-200"
                 >
                     Compose Email
                 </Button>
@@ -62,7 +39,7 @@ export default function DashboardPage() {
                                 : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                         >
-                            Scheduled
+                            Scheduled Emails
                             {activeTab === "scheduled" && (
                                 <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white" />
                             )}
@@ -74,7 +51,7 @@ export default function DashboardPage() {
                                 : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                         >
-                            Sent
+                            Sent Emails
                             {activeTab === "sent" && (
                                 <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white" />
                             )}

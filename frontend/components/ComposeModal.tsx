@@ -5,8 +5,7 @@ import { Modal } from "./Modal";
 import { Button } from "./Button";
 import { Input } from "./Input";
 import Papa from "papaparse";
-import { useSession } from "next-auth/react";
-import { scheduleEmails, CreateEmailData } from "../lib/api";
+import { scheduleEmail } from "../lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
@@ -16,7 +15,6 @@ interface ComposeModalProps {
 }
 
 export const ComposeModal: React.FC<ComposeModalProps> = ({ isOpen, onClose }) => {
-    const { data: session } = useSession();
     const queryClient = useQueryClient();
     const [recipientCount, setRecipientCount] = useState(0);
     const [parsedEmails, setParsedEmails] = useState<string[]>([]);
@@ -26,37 +24,35 @@ export const ComposeModal: React.FC<ComposeModalProps> = ({ isOpen, onClose }) =
     const [time, setTime] = useState("");
     const [isDragging, setIsDragging] = useState(false);
 
-    const userId = (session?.user as any)?.id;
-    const userEmail = session?.user?.email || "";
-
     const scheduleMutation = useMutation({
         mutationFn: async () => {
-            if (!userId) throw new Error("User not authenticated");
             if (parsedEmails.length === 0) throw new Error("No recipients found");
             if (!subject) throw new Error("Subject is required");
             if (!date || !time) throw new Error("Date and time are required");
 
             const scheduledAt = new Date(`${date}T${time}`).toISOString();
-            const emailBody = body || "Default body content";
 
-            const emailData: CreateEmailData[] = parsedEmails.map(email => ({
-                toEmail: email,
-                subject,
-                body: emailBody,
-                scheduledAt
-            }));
+            // Loop through emails and schedule each one
+            const promises = parsedEmails.map(recipient =>
+                scheduleEmail({
+                    recipient,
+                    subject,
+                    body,
+                    scheduledAt
+                })
+            );
 
-            return scheduleEmails(userId, userEmail, emailData);
+            await Promise.all(promises);
         },
         onSuccess: () => {
             toast.success(`Scheduled ${parsedEmails.length} emails`);
             queryClient.invalidateQueries({ queryKey: ["emails"] });
-            queryClient.invalidateQueries({ queryKey: ["email-stats"] });
             resetForm();
             onClose();
         },
         onError: (error: Error) => {
-            toast.error(error.message || "Failed to schedule emails");
+            toast.error("Failed to schedule emails");
+            console.error(error);
         }
     });
 
