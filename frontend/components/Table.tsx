@@ -5,50 +5,58 @@ interface TableProps {
     children: React.ReactNode;
 }
 
-export const Table: React.FC<TableProps> = ({ headers, children }) => {
+export function Table({ headers, children }: TableProps) {
     return (
-        <div className="w-full overflow-hidden border border-white/5 rounded-lg bg-[#141416]/50">
+        <div className="w-full overflow-hidden border border-border rounded-lg">
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                     <thead>
-                        <tr className="border-b border-white/5 bg-white/[0.02]">
-                            {headers.map((header, index) => (
+                        <tr className="border-b border-border bg-surface">
+                            {headers.map((header, i) => (
                                 <th
-                                    key={index}
-                                    className="py-3 px-4 font-medium text-zinc-500 uppercase tracking-wider text-[11px]"
+                                    key={i}
+                                    className="py-3 px-4 text-xs font-medium text-text-muted uppercase tracking-wide"
                                 >
                                     {header}
                                 </th>
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-border">
                         {children}
                     </tbody>
                 </table>
             </div>
         </div>
     );
-};
+}
 
-export const TableRow: React.FC<{ children: React.ReactNode; className?: string }> = ({
+export function TableRow({
     children,
     className = "",
-}) => {
+}: {
+    children: React.ReactNode;
+    className?: string;
+}) {
     return (
-        <tr className={`group hover:bg-white/[0.02] transition-colors ${className}`}>
+        <tr
+            className={`hover:bg-surface-hover transition-colors ${className}`}
+        >
             {children}
         </tr>
     );
-};
+}
 
-export const TableCell: React.FC<{ children: React.ReactNode; className?: string }> = ({
+export function TableCell({
     children,
     className = "",
-}) => {
+}: {
+    children: React.ReactNode;
+    className?: string;
+}) {
     return (
-        <td className={`py-3.5 px-4 text-zinc-300 group-hover:text-zinc-100 transition-colors ${className}`}>
+        <td className={`py-3 px-4 text-sm text-text-secondary ${className}`}>
             {children}
         </td>
     );
-};
+}

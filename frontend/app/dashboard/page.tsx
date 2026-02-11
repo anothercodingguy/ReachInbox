@@ -1,78 +1,89 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/Button";
+import { StatCard } from "@/components/StatCard";
 import { ComposeModal } from "@/components/ComposeModal";
 import { ScheduledEmailsTable } from "@/components/ScheduledEmailsTable";
 import { SentEmailsTable } from "@/components/SentEmailsTable";
-import { useSession } from "next-auth/react";
+import { getEmails } from "@/lib/api";
 
 export default function DashboardPage() {
-    const { data: session } = useSession();
-    const [activeTab, setActiveTab] = useState<"scheduled" | "sent">("scheduled");
+    const [activeTab, setActiveTab] = useState<"scheduled" | "sent">(
+        "scheduled"
+    );
     const [isComposeOpen, setIsComposeOpen] = useState(false);
 
+    const { data: emails } = useQuery({
+        queryKey: ["emails"],
+        queryFn: getEmails,
+        refetchInterval: 5000,
+    });
+
+    const scheduled = emails?.filter((e) => e.status === "SCHEDULED").length ?? 0;
+    const sent = emails?.filter((e) => e.status === "SENT").length ?? 0;
+    const failed = emails?.filter((e) => e.status === "FAILED").length ?? 0;
+
     return (
-        <div className="space-y-12 animate-fade-in pb-20 max-w-5xl mx-auto pt-10">
+        <div className="space-y-8">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
-                    <p className="text-zinc-500">Welcome back, {session?.user?.name || "User"}</p>
-                </div>
-                <Button
-                    onClick={() => setIsComposeOpen(true)}
-                    className="h-10 px-6 bg-white text-black hover:bg-zinc-200"
-                >
+                <h1 className="text-lg font-medium text-text-primary">
+                    Dashboard
+                </h1>
+                <Button onClick={() => setIsComposeOpen(true)}>
                     Compose Email
                 </Button>
             </div>
 
-            {/* Content Area */}
-            <div className="space-y-6">
-                <div className="border-b border-white/5">
-                    <div className="flex items-center gap-8">
-                        <button
-                            onClick={() => setActiveTab("scheduled")}
-                            className={`pb-4 text-sm font-medium transition-colors relative ${activeTab === "scheduled"
-                                ? "text-white"
-                                : "text-zinc-500 hover:text-zinc-300"
-                                }`}
-                        >
-                            Scheduled Emails
-                            {activeTab === "scheduled" && (
-                                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white" />
-                            )}
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("sent")}
-                            className={`pb-4 text-sm font-medium transition-colors relative ${activeTab === "sent"
-                                ? "text-white"
-                                : "text-zinc-500 hover:text-zinc-300"
-                                }`}
-                        >
-                            Sent Emails
-                            {activeTab === "sent" && (
-                                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white" />
-                            )}
-                        </button>
-                    </div>
-                </div>
-
-                <div className="min-h-[400px]">
-                    {activeTab === "scheduled" ? (
-                        <div className="animate-fade-in">
-                            <ScheduledEmailsTable />
-                        </div>
-                    ) : (
-                        <div className="animate-fade-in">
-                            <SentEmailsTable />
-                        </div>
-                    )}
-                </div>
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-4">
+                <StatCard label="Scheduled" value={scheduled} />
+                <StatCard label="Sent" value={sent} />
+                <StatCard label="Failed" value={failed} />
             </div>
 
-            <ComposeModal isOpen={isComposeOpen} onClose={() => setIsComposeOpen(false)} />
+            {/* Tabs */}
+            <div>
+                <div className="flex items-center gap-6 border-b border-border mb-6">
+                    <button
+                        onClick={() => setActiveTab("scheduled")}
+                        className={`pb-3 text-sm transition-colors relative ${activeTab === "scheduled"
+                                ? "text-text-primary"
+                                : "text-text-muted hover:text-text-secondary"
+                            }`}
+                    >
+                        Scheduled
+                        {activeTab === "scheduled" && (
+                            <span className="absolute bottom-0 left-0 w-full h-px bg-text-primary" />
+                        )}
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("sent")}
+                        className={`pb-3 text-sm transition-colors relative ${activeTab === "sent"
+                                ? "text-text-primary"
+                                : "text-text-muted hover:text-text-secondary"
+                            }`}
+                    >
+                        Sent &amp; Failed
+                        {activeTab === "sent" && (
+                            <span className="absolute bottom-0 left-0 w-full h-px bg-text-primary" />
+                        )}
+                    </button>
+                </div>
+
+                {activeTab === "scheduled" ? (
+                    <ScheduledEmailsTable />
+                ) : (
+                    <SentEmailsTable />
+                )}
+            </div>
+
+            <ComposeModal
+                isOpen={isComposeOpen}
+                onClose={() => setIsComposeOpen(false)}
+            />
         </div>
     );
 }

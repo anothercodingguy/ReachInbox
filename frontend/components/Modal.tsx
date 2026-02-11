@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect } from "react";
 
 interface ModalProps {
@@ -7,7 +9,7 @@ interface ModalProps {
     children: React.ReactNode;
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+export function Modal({ isOpen, onClose, title, children }: ModalProps) {
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose();
@@ -27,21 +29,38 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
-            <div className="w-full max-w-lg bg-[#141416] border border-white/10 rounded-xl shadow-2xl relative animate-slide-up overflow-hidden">
-                <div className="flex justify-between items-center p-6 border-b border-white/5">
-                    <h2 className="text-lg font-medium text-white">{title}</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+                className="absolute inset-0"
+                style={{ backgroundColor: "var(--color-overlay)" }}
+                onClick={onClose}
+            />
+            <div className="relative w-full max-w-lg bg-surface border border-border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+                    <h2 className="text-sm font-medium text-text-primary">
+                        {title}
+                    </h2>
                     <button
                         onClick={onClose}
-                        className="text-zinc-500 hover:text-white transition-colors p-1 rounded-md hover:bg-white/5"
+                        className="text-text-muted hover:text-text-primary transition-colors"
                     >
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
                         </svg>
                     </button>
                 </div>
-                <div className="p-6">{children}</div>
+                <div className="px-6 py-5">{children}</div>
             </div>
         </div>
     );
-};
+}

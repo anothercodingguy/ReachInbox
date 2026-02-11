@@ -19,16 +19,22 @@ export interface CreateEmailData {
     scheduledAt: string;
 }
 
-async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+async function fetchAPI<T>(
+    endpoint: string,
+    options: RequestInit = {}
+): Promise<T> {
     const response = await fetch(`${API_URL}${endpoint}`, {
         headers: { "Content-Type": "application/json", ...options.headers },
         ...options,
     });
 
     if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: "Unknown error" }));
+        const error = await response
+            .json()
+            .catch(() => ({ error: "Request failed" }));
         throw new Error(error.error || "Request failed");
     }
+
     return response.json();
 }
 
