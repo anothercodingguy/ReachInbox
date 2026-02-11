@@ -1,5 +1,4 @@
 import { Queue } from 'bullmq';
-import Redis from 'ioredis';
 
 export interface EmailJobData {
     emailId: string;
@@ -24,9 +23,8 @@ export const emailQueue = new Queue<EmailJobData>('email-queue', {
 });
 
 export async function scheduleEmailJob(emailId: string, delay: number) {
-    await emailQueue.add('send-email' as any, { emailId }, {
+    await emailQueue.add('send-email', { emailId }, {
         jobId: emailId,
         delay,
     });
-    console.log(`Scheduled email ${emailId} with delay ${delay}ms`);
 }

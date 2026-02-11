@@ -6,22 +6,21 @@ import prisma from './lib/prisma.js';
 
 const app = express();
 const PORT = process.env.BACKEND_PORT || 4000;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
-app.use(cors()); // Allow all
+app.use(cors({ origin: FRONTEND_URL }));
 app.use(express.json());
 
-// Routes
 app.use('/api/emails', emailRoutes);
 
-app.get('/health', (req, res) => res.json({ status: 'ok' }));
+app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-// Start
 app.listen(PORT, async () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
     try {
         await prisma.$connect();
-        console.log('✅ DB Connected');
+        console.log('Database connected');
     } catch (err) {
-        console.error('❌ DB Connection failed:', err);
+        console.error('Database connection failed:', err);
     }
 });

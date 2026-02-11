@@ -6,16 +6,13 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "npx prisma db push --accept-data-loss && node dist/index.js",
+    "start": "npx prisma db push && node dist/index.js",
     "worker": "tsx src/worker.ts",
     "worker:dev": "tsx watch src/worker.ts",
     "db:generate": "prisma generate",
-    "db:push": "prisma db push --accept-data-loss",
+    "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:integration": "vitest run --config vitest.integration.config.ts"
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@bull-board/api": "^5.21.4",
@@ -37,7 +34,6 @@
     "@types/nodemailer": "^6.4.16",
     "prisma": "^5.19.1",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.2",
-    "vitest": "^2.1.1"
+    "typescript": "^5.6.2"
   }
 }
