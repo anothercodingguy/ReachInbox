@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "npx prisma db push && node dist/index.js",
+    "start": "npx prisma db push --accept-data-loss && node dist/index.js",
     "worker": "tsx src/worker.ts",
     "worker:dev": "tsx watch src/worker.ts",
     "db:generate": "prisma generate",
