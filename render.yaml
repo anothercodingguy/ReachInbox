@@ -8,6 +8,7 @@ services:
     runtime: node
     region: oregon
     plan: free
+    nodeVersion: 20
     buildCommand: cd backend && npm install --include=dev && npx prisma generate && npm run build
     startCommand: cd backend && npx prisma db push && node dist/index.js
     envVars:
@@ -39,6 +40,7 @@ services:
     runtime: node
     region: oregon
     plan: free
+    nodeVersion: 20
     buildCommand: cd backend && npm install --include=dev && npx prisma generate && npm run build
     startCommand: cd backend && node dist/worker.js
     envVars:
@@ -66,6 +68,7 @@ services:
     runtime: node
     region: oregon
     plan: free
+    nodeVersion: 20
     buildCommand: cd frontend && npm install --include=dev && npm run build
     startCommand: cd frontend && npm run start
     envVars:

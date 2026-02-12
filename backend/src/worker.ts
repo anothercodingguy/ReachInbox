@@ -9,10 +9,11 @@ const WORKER_CONCURRENCY = parseInt(process.env.WORKER_CONCURRENCY || '1', 10);
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const RATE_LIMIT_PER_HOUR = parseInt(process.env.RATE_LIMIT_PER_HOUR || '100', 10);
 
-const redisConfig = {
-    host: new URL(redisUrl).hostname,
-    port: parseInt(new URL(redisUrl).port || '6379'),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const workerConnection: any = {
+    url: redisUrl,
     maxRetriesPerRequest: null,
+    enableReadyCheck: false,
 };
 
 const redis = new Redis(redisUrl, { maxRetriesPerRequest: null });
@@ -73,7 +74,7 @@ async function startWorker() {
         'email-queue',
         processEmailJob,
         {
-            connection: redisConfig,
+            connection: workerConnection,
             concurrency: WORKER_CONCURRENCY,
         }
     );

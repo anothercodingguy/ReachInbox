@@ -6,9 +6,12 @@ import prisma from './lib/prisma.js';
 
 const app = express();
 const PORT = process.env.BACKEND_PORT || 4000;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
-app.use(cors({ origin: FRONTEND_URL }));
+app.use(cors({
+    origin: FRONTEND_URL ? FRONTEND_URL.split(',').map(u => u.trim()) : true,
+    credentials: true,
+}));
 app.use(express.json());
 
 app.use('/api/emails', emailRoutes);
