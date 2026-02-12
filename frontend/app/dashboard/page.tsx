@@ -23,29 +23,35 @@ export default function DashboardPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div className="flex gap-6">
+            <div className="flex items-end justify-between border-b-2 border-border pb-4">
+                <div className="flex gap-8">
                     <button
                         onClick={() => setView("scheduled")}
-                        className={`text-sm font-medium transition-colors ${view === "scheduled" ? "text-text" : "text-text-muted hover:text-text"
+                        className={`text-lg font-serif transition-colors relative ${view === "scheduled" ? "text-text font-medium" : "text-text-muted hover:text-text cursor-pointer"
                             }`}
                     >
                         Scheduled
+                        {view === "scheduled" && (
+                            <span className="absolute -bottom-[18px] left-0 right-0 h-0.5 bg-text opacity-80" />
+                        )}
                     </button>
                     <button
                         onClick={() => setView("sent")}
-                        className={`text-sm font-medium transition-colors ${view === "sent" ? "text-text" : "text-text-muted hover:text-text"
+                        className={`text-lg font-serif transition-colors relative ${view === "sent" ? "text-text font-medium" : "text-text-muted hover:text-text cursor-pointer"
                             }`}
                     >
-                        Sent
+                        Sent History
+                        {view === "sent" && (
+                            <span className="absolute -bottom-[18px] left-0 right-0 h-0.5 bg-text opacity-80" />
+                        )}
                     </button>
                 </div>
 
                 <button
                     onClick={() => setIsComposeOpen(true)}
-                    className="text-sm text-bg bg-text px-4 py-1.5 rounded-lg font-medium hover:bg-white/90 transition-colors"
+                    className="font-hand text-lg text-bg bg-text px-5 py-2 rounded-md hover:bg-black/90 hover:rotate-1 transition-all shadow-sm"
                 >
-                    New email
+                    + Write new
                 </button>
             </div>
 

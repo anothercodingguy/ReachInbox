@@ -27,9 +27,9 @@ export default function DashboardLayout({
 
     return (
         <div className="min-h-screen bg-bg">
-            <header className="border-b border-border">
-                <div className="max-w-2xl mx-auto px-6 h-14 flex items-center justify-between">
-                    <span className="text-sm font-medium text-text">ReachInbox</span>
+            <header className="border-b border-border bg-bg/80 backdrop-blur-sm sticky top-0 z-10">
+                <div className="max-w-2xl mx-auto px-6 h-16 flex items-center justify-between">
+                    <span className="text-xl font-serif font-bold text-text tracking-tight">ReachInbox</span>
 
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-3">

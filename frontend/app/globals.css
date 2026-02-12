@@ -86,6 +86,29 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     opacity: 0.6;
 }
 
+/* Typography Utilities */
+.font-serif {
+    font-family: "Playfair Display", serif;
+}
+
+.font-hand {
+    font-family: "Patrick Hand", cursive;
+}
+
+/* Paper Card Effect */
+.paper-card {
+    background-color: var(--bg-raised);
+    border: 1px solid var(--border);
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+}
+
+.paper-card:hover {
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+    border-color: #d1d5db;
+}
+
 /* Selection */
 ::selection {
     background-color: rgba(253, 224, 71, 0.4);
