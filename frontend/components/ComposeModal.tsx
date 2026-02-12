@@ -125,7 +125,7 @@ export function ComposeModal({ isOpen, onClose }: ComposeModalProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/60"
+                className="absolute inset-0 bg-[#2d2a26]/20 backdrop-blur-[1px]"
                 onClick={handleClose}
             />
 
