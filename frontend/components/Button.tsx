@@ -1,30 +1,42 @@
 import React from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: "primary" | "secondary";
+    variant?: "primary" | "secondary" | "ghost" | "danger";
+    size?: "sm" | "md" | "lg";
     children: React.ReactNode;
 }
 
 export function Button({
     variant = "primary",
+    size = "md",
     children,
     className = "",
     disabled,
     ...props
 }: ButtonProps) {
     const base =
-        "inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none";
+        "inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none focus:outline-none focus:ring-2 focus:ring-offset-1 active:scale-[0.98]";
+
+    const sizes = {
+        sm: "px-3 py-1.5 text-xs gap-1.5",
+        md: "px-5 py-2.5 text-sm gap-2",
+        lg: "px-6 py-3 text-base gap-2",
+    };
 
     const variants = {
         primary:
-            "bg-text-primary text-bg hover:opacity-80 disabled:hover:opacity-40",
+            "bg-gradient-to-r from-[var(--color-gradient-start)] to-[var(--color-gradient-end)] text-white shadow-md hover:shadow-lg hover:shadow-accent-glow focus:ring-accent disabled:hover:shadow-md",
         secondary:
-            "bg-transparent border border-border-light text-text-secondary hover:text-text-primary hover:border-text-muted disabled:hover:text-text-secondary disabled:hover:border-border-light",
+            "glass text-text-primary hover:bg-surface-hover focus:ring-accent",
+        ghost:
+            "bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface-hover focus:ring-accent",
+        danger:
+            "bg-danger/10 text-danger hover:bg-danger/20 focus:ring-danger",
     };
 
     return (
         <button
-            className={`${base} ${variants[variant]} ${className}`}
+            className={`${base} ${sizes[size]} ${variants[variant]} ${className}`}
             disabled={disabled}
             {...props}
         >

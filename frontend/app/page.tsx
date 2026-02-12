@@ -17,31 +17,61 @@ export default function LoginPage() {
     if (status === "loading") {
         return (
             <div className="min-h-screen flex items-center justify-center bg-bg">
-                <p className="text-sm text-text-muted">Loading...</p>
+                <div className="flex items-center gap-3 text-text-muted">
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    <span className="text-sm">Loading...</span>
+                </div>
             </div>
         );
     }
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-bg p-4">
-            <div className="w-full max-w-xs">
+        <main className="min-h-screen flex items-center justify-center bg-bg relative overflow-hidden">
+            {/* Animated background gradient orbs */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-gradient-to-br from-[var(--color-gradient-start)]/20 to-[var(--color-gradient-end)]/10 blur-3xl" />
+                <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-gradient-to-tr from-[var(--color-gradient-end)]/15 to-[var(--color-gradient-start)]/5 blur-3xl" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-r from-[var(--color-gradient-start)]/5 to-[var(--color-gradient-end)]/5 blur-3xl" />
+            </div>
+
+            {/* Grid pattern overlay */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
+
+            <div className="w-full max-w-sm relative z-10 animate-slide-up px-4">
+                {/* Logo & Title */}
                 <div className="mb-8 text-center">
-                    <h1 className="text-lg font-medium text-text-primary mb-1">
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--color-gradient-start)] to-[var(--color-gradient-end)] mb-4 shadow-lg shadow-accent-glow">
+                        <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        </svg>
+                    </div>
+                    <h1 className="text-2xl font-bold gradient-text mb-1">
                         ReachInbox
                     </h1>
                     <p className="text-sm text-text-muted">
-                        Sign in to continue
+                        Schedule and deliver emails at scale
                     </p>
                 </div>
 
-                <div className="bg-surface border border-border rounded-lg p-6">
+                {/* Glass Card */}
+                <div className="glass rounded-2xl p-8 shadow-lg relative overflow-hidden">
+                    {/* Gradient top accent */}
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent opacity-60" />
+
+                    <p className="text-sm text-text-secondary text-center mb-6">
+                        Sign in to access your dashboard
+                    </p>
+
                     <button
                         onClick={() =>
                             signIn("google", { callbackUrl: "/dashboard" })
                         }
-                        className="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 bg-text-primary text-bg rounded-md text-sm font-medium hover:opacity-80 transition-colors"
+                        className="w-full flex items-center justify-center gap-3 px-5 py-3 glass rounded-xl text-sm font-medium text-text-primary hover:bg-surface-hover transition-all duration-200 group"
                     >
-                        <svg className="w-4 h-4" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5" viewBox="0 0 24 24">
                             <path
                                 fill="#4285F4"
                                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -59,9 +89,16 @@ export default function LoginPage() {
                                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                             />
                         </svg>
-                        Continue with Google
+                        <span className="group-hover:translate-x-0.5 transition-transform">
+                            Continue with Google
+                        </span>
                     </button>
                 </div>
+
+                {/* Footer */}
+                <p className="text-xs text-text-muted text-center mt-6">
+                    By signing in, you agree to our terms of service
+                </p>
             </div>
         </main>
     );
