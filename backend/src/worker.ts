@@ -1,22 +1,12 @@
 import { Worker, Job } from 'bullmq';
-import Redis from 'ioredis';
 import 'dotenv/config';
 import { EmailJobData } from './lib/queue.js';
 import { initializeMailer, sendEmail } from './lib/mailer.js';
 import prisma from './lib/prisma.js';
+import { redis, bullmqConnection } from './lib/redis.js';
 
 const WORKER_CONCURRENCY = parseInt(process.env.WORKER_CONCURRENCY || '1', 10);
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 const RATE_LIMIT_PER_HOUR = parseInt(process.env.RATE_LIMIT_PER_HOUR || '100', 10);
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const workerConnection: any = {
-    url: redisUrl,
-    maxRetriesPerRequest: null,
-    enableReadyCheck: false,
-};
-
-const redis = new Redis(redisUrl, { maxRetriesPerRequest: null });
 
 async function processEmailJob(job: Job<EmailJobData>): Promise<void> {
     const { emailId } = job.data;
@@ -74,13 +64,28 @@ async function startWorker() {
         'email-queue',
         processEmailJob,
         {
-            connection: workerConnection,
+            connection: bullmqConnection,
             concurrency: WORKER_CONCURRENCY,
         }
     );
 
     worker.on('failed', (job, err) => console.error(`Job ${job?.id} failed: ${err.message}`));
     console.log('Worker started');
+
+    // Graceful shutdown
+    const shutdown = async () => {
+        console.log('Worker shutting down...');
+        await worker.close();
+        await redis.quit();
+        await prisma.$disconnect();
+        process.exit(0);
+    };
+
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
 }
 
-startWorker().catch(console.error);
+startWorker().catch((err) => {
+    console.error('Worker failed to start:', err);
+    process.exit(1);
+});
